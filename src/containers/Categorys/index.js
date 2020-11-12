@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
 import { Container, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,19 +43,35 @@ const Category = (props) => {
   const [deleteCategoriesModal, setDeleteCategoriesModal] = useState(false);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!category.loading) {
+      setShow(false);
+    }
+  }, [category.loading]);
+
+  const emptyData = () => {
+    setCategoryName("");
+    setParentCategoryId("");
+    setCategoryImage("");
+  };
+
+  const handleClear = () => {
+    setShow(false);
+    emptyData();
+  };
+
   const handleClose = () => {
     const form = new FormData();
+    if (!categoryName) {
+      alert("required fields");
+      handleClear();
+      return;
+    }
     form.append("name", categoryName);
     form.append("parentId", parentCategoryId);
     form.append("categoryImage", categoryImage);
-    if (categoryName || parentCategoryId || categoryImage) {
-      dispatch(addCategory(form));
-      setCategoryName("");
-      setParentCategoryId("");
-      setShow(false);
-    } else {
-      setShow(false);
-    }
+    dispatch(addCategory(form));
+    handleClear();
   };
 
   const handleShow = () => setShow(true);
@@ -153,7 +169,6 @@ const Category = (props) => {
       form.append("type", item.type);
     });
     dispatch(updateCategories(form));
-    setUpdateCategoryModal(false);
   };
   const deleteClose = () => setDeleteCategoriesModal(false);
 
@@ -240,7 +255,8 @@ const Category = (props) => {
       </Container>
       <UpdateCategoriesModal
         show={updateCategoryModal}
-        handleClose={updateCategoryForm}
+        handleClose={() => setUpdateCategoryModal(false)}
+        onSubmit={updateCategoryForm}
         modalTitle={"Update Categories"}
         size="lg"
         expandedArray={expandedArray}
@@ -250,7 +266,8 @@ const Category = (props) => {
       />
       <AddCategoryModal
         show={show}
-        handleClose={handleClose}
+        handleClose={handleClear}
+        onSubmit={handleClose}
         modalTitle={"Add new Category"}
         handleCategoryImage={handleCategoryImage}
         categoryName={categoryName}

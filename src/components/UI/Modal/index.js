@@ -23,7 +23,7 @@ const newModal = (props) => {
         ) : (
           <Button
             className="btn-sm btn-secondary"
-            onClick={props.handleClose}
+            onClick={props.onSubmit}
             {...props}
           >
             Save
