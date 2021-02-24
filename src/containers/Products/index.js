@@ -3,10 +3,16 @@ import Layout from "../../components/Layout";
 import Input from "../../components/UI/Input";
 import { Container, Row, Col, Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addProduct } from "../../actions";
+import { addProduct, deleteProductById } from "../../actions";
 import NewModal from "../../components/UI/Modal";
 import "./style.css";
 import { generatePublicUrl } from "../../urlConfig";
+import {
+  IoIosAdd,
+  IoIosInformationCircleOutline,
+  IoIosTrash,
+} from "react-icons/io";
+import DeleteProductModal from "./components/DeleteProductModal";
 /**
  * @author
  * @function Products
@@ -20,12 +26,18 @@ const Products = (props) => {
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [productDetails, setProduitdetails] = useState(null);
+  const [productId, setProductId] = useState(null);
   const [productPictures, setProductPictures] = useState([]);
   const [productDetailsModal, setProductDetailsModal] = useState(false);
+  const [deleteProductModal, setDeleteProductModal] = useState(false);
   const category = useSelector((state) => state.category);
   const product = useSelector((state) => state.product);
   const dispatch = useDispatch();
+
   const handleClose = () => {
+    setShow(false);
+  };
+  const submitProductForm = () => {
     const form = new FormData();
     form.append("name", name);
     form.append("quantity", quantity);
@@ -35,8 +47,7 @@ const Products = (props) => {
     for (let pic of productPictures) {
       form.append("productPictures", pic);
     }
-    dispatch(addProduct(form));
-    setShow(false);
+    dispatch(addProduct(form)).then(() => setShow(false));
   };
   const handleShow = () => setShow(true);
 
@@ -53,6 +64,26 @@ const Products = (props) => {
     setProductPictures([...productPictures, e.target.files[0]]);
   };
 
+  const deleteProduct = () => {
+    const payload = productId;
+    console.log(payload);
+    dispatch(deleteProductById(payload));
+  };
+  const deleteClose = () => setDeleteProductModal(false);
+  const deleteOpen = () => setDeleteProductModal(true);
+  const buttons = [
+    {
+      label: "No",
+      color: "primary",
+      onClick: deleteClose,
+    },
+    {
+      label: "Yes",
+      color: "danger",
+      onClick: deleteProduct,
+    },
+  ];
+
   const renderProducts = () => {
     return (
       <Table style={{ fontSize: 12 }} responsive="sm">
@@ -62,21 +93,38 @@ const Products = (props) => {
             <th>Name</th>
             <th>Price</th>
             <th>Quantity</th>
-            <th>category</th>
+            <th>Category</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {product.products.length > 0
             ? product.products.map((product) => (
-                <tr
-                  onClick={() => showProductDetailsModal(product)}
-                  key={product._id}
-                >
-                  <td>3</td>
+                <tr key={product._id}>
+                  <td>2</td>
                   <td>{product.name}</td>
                   <td>{product.price}</td>
                   <td>{product.quantity}</td>
                   <td>{product.category.name}</td>
+                  <td>
+                    <button
+                      className="btn-action btn-warning"
+                      onClick={() => showProductDetailsModal(product)}
+                    >
+                      <IoIosInformationCircleOutline />
+                      &nbsp;info
+                    </button>
+                    <button
+                      className="btn-action btn-danger"
+                      onClick={() => {
+                        setProductId(product._id);
+                        deleteOpen();
+                      }}
+                    >
+                      <IoIosTrash />
+                      &nbsp;Delete
+                    </button>
+                  </td>
                 </tr>
               ))
             : null}
@@ -91,6 +139,7 @@ const Products = (props) => {
         show={show}
         handleClose={handleClose}
         modalTitle={"Add new Product"}
+        onSubmit={submitProductForm}
       >
         <Input
           label="Product"
@@ -212,7 +261,12 @@ const Products = (props) => {
           <Col md={12}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h3>Products</h3>
-              <button variant="primary" onClick={handleShow}>
+              <button
+                className="btn-action  btn-success"
+                variant="primary"
+                onClick={handleShow}
+              >
+                <IoIosAdd />
                 Add Product
               </button>
             </div>
@@ -224,6 +278,12 @@ const Products = (props) => {
       </Container>
       {renderAddProductModal()}
       {renderProductDetailsModal()}
+      <DeleteProductModal
+        show={deleteProductModal}
+        handleClose={deleteClose}
+        modalTitle={"Delete Product Confirmation"}
+        buttons={buttons}
+      />
     </Layout>
   );
 };

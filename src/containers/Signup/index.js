@@ -1,35 +1,44 @@
-import React, { useState } from "react";
-import {Redirect} from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
 import Layout from "../../components/Layout";
 import Input from "../../components/UI/Input";
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import {signUp} from '../../actions';
+import { signUp } from "../../actions";
 /**
  * @author
  * @function Signup
  **/
 
 const Signup = (props) => {
-  const [firstName, setFirstName]= useState('');
-  const [lastName, setLastName]= useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const user = useSelector(state=> state.user);
+  const user = useSelector((state) => state.user);
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const userSignup = (e)=>{
+  useEffect(() => {
+    if (!user.loading) {
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+    }
+  }, [user.loading]);
+
+  const userSignup = (e) => {
     e.preventDefault();
-    const user = {firstName,lastName,email,password};
+    const user = { firstName, lastName, email, password };
     dispatch(signUp(user));
   };
   if (auth.authanticate) {
     return <Redirect to={"/"} />;
   }
-  if(user.loading){
-    return <p>...loading</p>
+  if (user.loading) {
+    return <p>...loading</p>;
   }
   return (
     <Layout>

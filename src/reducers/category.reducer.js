@@ -117,6 +117,8 @@ export default (state = initState, action) => {
         loading: false,
       };
       break;
+    default:
+      break;
   }
   return state;
 };

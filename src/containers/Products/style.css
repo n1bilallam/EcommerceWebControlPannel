@@ -1,20 +1,28 @@
-.key{
-    font-size: 12px;
-    font-weight: bold;
-    font-family: sans-serif;
+.key {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: sans-serif;
 }
-.value{
-    font-size: 14px;
-    font-family: sans-serif;
+.value {
+  font-size: 14px;
+  font-family: sans-serif;
 }
-.productPicContainer{
-width: 100px;
-height: 100px;
-overflow: hidden;
-text-align: center;
+.productPicContainer {
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  text-align: center;
 }
-.productPicContainer img{
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+.productPicContainer img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.btn-action {
+  border: none;
+  border-radius: 7px;
+  margin: 0 5px;
+  font-size: 14px;
+  outline-width: 0;
 }

@@ -21,6 +21,7 @@
 }
 .actionsBtnContainer > button {
   border: none;
+  border-radius: 7px;
   margin: 0 5px;
   font-size: 14px;
   outline-width: 0;
